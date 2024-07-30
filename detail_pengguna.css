@@ -1,0 +1,165 @@
+/* Global Styles */
+body {
+    background: linear-gradient(to bottom, #1E0342, #433D8B);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    font-family: 'Poppins', sans-serif;
+    margin: 0;
+}
+
+.wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: -100px; /* Adjust this to move everything upwards */
+}
+
+.logo-container {
+    margin-bottom: -60px; /* Reduce this to decrease the space between logo and form */
+}
+
+.logo-container img {
+    width: 300px;
+}
+
+.logo-top-left {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+}
+
+.logo-top-left img {
+    width: 125px;
+}
+
+.page-title {
+    font-size: 1.5rem;
+    color: white;
+    margin-top: 1px; /* Adjust the margin as needed */
+}
+
+.background-white {
+    background: white;
+    padding: 2rem;
+    border-radius: 1rem;
+    box-shadow: 0 0 1rem rgba(0, 0, 0, 0.1);
+    text-align: center;
+}
+
+.buttons-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px; /* Space between buttons */
+}
+
+.button {
+    background-color: #711CE2;
+    color: white;
+    padding: 15px 30px;
+    text-decoration: none;
+    border-radius: 5px;
+    font-size: 18px;
+    font-weight: bold;
+}
+
+.button:hover {
+    background-color: #5a0db1; /* Darker shade for hover effect */
+}
+
+.logout {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background: white;
+    color: #6c63ff;
+    padding: 10px 20px;
+    border-radius: 10px;
+    text-decoration: none;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    transition: background-color 0.3s;
+}
+
+.logout:hover {
+    background: #6c63ff;
+    color: white;
+}
+
+/* Form Styles */
+.form-box {
+    margin-top: 4rem;
+    background: #fff;
+    padding: 2rem;
+    border-radius: 50px; /* Mengubah border-radius */
+    box-shadow: 0 0 1rem rgba(0, 0, 0, 0.1);
+    width: 1150px; /* Mengubah lebar */
+    height: 350px; /* Mengubah tinggi */
+    border: 10px solid #ccc; /* Menambahkan border */
+    text-align: center;
+}
+
+.form-group {
+    display: flex; /* Use flexbox */
+    margin-bottom: 1rem; /* Space between form groups */
+    justify-content: space-around;
+}
+
+.form-group label {
+    width: 19%; /* Adjust width as needed */
+    text-align: left; /* Align text to the right */
+    font-size: 25px;
+}
+
+.form-group input,
+.form-group textarea {
+    flex: 1; /* Allow input to take remaining space */
+    width: 100%;
+    padding: 0.5rem;
+    border: 2px solid #5a0db1;
+    border-radius: 0.3rem;
+}
+
+.form-group textarea {
+    resize: vertical;
+}
+
+.backguru {
+    display: inline-block;
+    margin-top: 20px;
+    padding: 10px 20px;
+    background: white;
+    color: #6c63ff;
+    text-decoration: none;
+    border-radius: 10px;
+    transition: background-color 0.3s;
+    bottom: 20px;
+    left: 20px;
+    position: fixed;
+}
+
+.backguru:hover {
+    background: #6c63ff;
+    color: white;
+}
+
+.form-group {
+    display: flex;
+    margin-bottom: 1rem;
+    justify-content: flex-start;
+    align-items: center;
+}
+
+.kotak {
+    border: 2px solid #711CE2;
+    padding: 10px;
+    margin-left: 20px; /* Optional: Adjust spacing from the label */
+    flex: 1; /* Make sure the kotak takes up the remaining space */
+}
+
+.kotak p {
+    margin: 0; /* Remove default margin from p */
+    text-align: left; /* Ensure text is aligned to the left */
+}
