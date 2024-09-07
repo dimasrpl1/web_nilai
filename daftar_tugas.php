@@ -25,7 +25,6 @@ $user_id = $_SESSION['user_id']; // Get the logged-in student's ID
 $mapel = isset($_GET['mapel']) ? $_GET['mapel'] : '';
 $tugas = [];
 
-// Debugging: Cek apakah $mapel sudah terisi dengan benar
 if (empty($mapel)) {
     die("Parameter mapel tidak ada atau kosong.");
 }
@@ -71,37 +70,59 @@ $conn->close();
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Daftar Tugas</title>
-    <link rel="stylesheet" href="daftar_tugas.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap');
+        body {
+            font-family: 'Poppins', sans-serif;
+        }
+
+        .animate-fade-in {
+            opacity: 0;
+            animation: fadeIn 0.8s forwards;
+        }
+
+        @keyframes fadeIn {
+            to {
+                opacity: 1;
+            }
+        }
+    </style>
 </head>
-<body>
-    <div class="logo-top-left">
-        <img src="logobadag.png" alt="Logo">
+<body class="bg-gradient-to-b from-[#1E0342] to-[#433D8B] min-h-screen flex flex-col items-center justify-center p-4">
+    <!-- Logo -->
+    <div class="absolute top-5 left-5">
+        <img src="logobadag.png" alt="Logo" class="w-24 sm:w-32">
     </div>
 
-    <div class="page-title"><?php echo ucfirst(str_replace('_', ' ', htmlspecialchars($mapel))); ?></div>
+    <!-- Page Title -->
+    <h1 class="text-white text-2xl sm:text-4xl font-semibold mt-10 animate-fade-in text-center capitalize">
+        <?php echo ucfirst(str_replace('_', ' ', htmlspecialchars($mapel))); ?>
+    </h1>
 
-    <div class="tasks-container">
-        <table>
+    <!-- Tasks Container -->
+    <div class="tasks-container bg-white p-5 sm:p-10 rounded-lg shadow-xl mt-10 animate-fade-in w-full sm:max-w-4xl">
+        <table class="w-full border-collapse text-sm sm:text-base">
             <thead>
-                <tr>
-                    <th>Judul Tugas</th>
-                    <th>Tanggal</th>
-                    <th>Deskripsi</th>
-                    <th>Nilai</th>
+                <tr class="bg-[#433D8B] text-white">
+                    <th class="p-3">Judul Tugas</th>
+                    <th class="p-3">Tanggal</th>
+                    <th class="p-3">Deskripsi</th>
+                    <th class="p-3">Nilai</th>
                 </tr>
             </thead>
             <tbody>
                 <?php if (empty($tugas)): ?>
                 <tr>
-                    <td colspan="4">Tidak ada tugas yang tersedia untuk mata pelajaran ini.</td>
+                    <td colspan="4" class="p-3 text-center text-gray-500">Tidak ada tugas yang tersedia untuk mata pelajaran ini.</td>
                 </tr>
                 <?php else: ?>
                 <?php foreach ($tugas as $item): ?>
-                <tr>
-                    <td><?php echo htmlspecialchars($item['judul_tugas']); ?></td>
-                    <td><?php echo htmlspecialchars(format_date_indonesia($item['tanggal_tugas'])); ?></td>
-                    <td><?php echo htmlspecialchars($item['deskripsi']); ?></td>
-                    <td><?php echo htmlspecialchars($item['nilai']); ?></td>
+                <tr class="hover:bg-gray-100 transition duration-300">
+                    <td class="p-3 text-center"><?php echo htmlspecialchars($item['judul_tugas']); ?></td>
+                    <td class="p-3 text-center"><?php echo htmlspecialchars(format_date_indonesia($item['tanggal_tugas'])); ?></td>
+                    <td class="p-3 text-center"><?php echo htmlspecialchars($item['deskripsi']); ?></td>
+                    <td class="p-3 text-center"><?php echo htmlspecialchars($item['nilai']); ?></td>
                 </tr>
                 <?php endforeach; ?>
                 <?php endif; ?>
@@ -109,6 +130,10 @@ $conn->close();
         </table>
     </div>
 
-    <a class="back" href="siswa.php">Kembali</a>
+    <!-- Back Button -->
+    <a href="siswa.php" class="fixed bottom-5 right-5 bg-white text-[#433D8B] font-semibold px-4 py-2 sm:px-5 sm:py-3 rounded-xl shadow-lg hover:bg-[#433D8B] hover:text-white transition duration-300">
+        Kembali
+    </a>
+
 </body>
 </html>

@@ -1,6 +1,12 @@
 <?php
 session_start();
 
+// Periksa apakah pengguna sudah login dan perannya adalah admin
+if (!isset($_SESSION['user_id']) || $_SESSION['peran'] !== 'admin') {
+    header("Location: login.php");
+    exit();
+}
+
 $servername = "localhost";
 $username = "root";
 $password = "";
@@ -51,23 +57,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $stmt->bind_param("sssssss", $namalengkap, $hashed_password, $nik, $peran, $kelas, $mapel, $anak);
             
             if ($stmt->execute()) {
-                // Ambil ID baru
-                $user_id = $stmt->insert_id;
-                $_SESSION['user_id'] = $user_id;
-                $_SESSION['peran'] = $peran;
-                
-                // Arahkan ke halaman sesuai peran
-                switch ($peran) {
-                    case 'guru':
-                        header("Location: guru.php");
-                        break;
-                    case 'siswa':
-                        header("Location: siswa.php");
-                        break;
-                    case 'orangtua':
-                        header("Location: orangtua.php");
-                        break;
-                }
+                // Redirect to data_pengguna.php
+                header("Location: data_pengguna.php");
                 exit();
             } else {
                 $errors[] = "Terjadi kesalahan saat registrasi.";
@@ -85,7 +76,7 @@ $conn->close();
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Register</title>
+    <title>Input Pengguna</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap');
@@ -94,16 +85,14 @@ $conn->close();
         }
     </style>
 </head>
-<body class="bg-gradient-to-b from-[#1E0342] to-[#433D8B] flex items-center justify-center min-h-screen px-4 py-16">
+<body class="bg-gradient-to-b from-[#1E0342] to-[#433D8B] min-h-screen flex flex-col items-center justify-center px-4 py-16">
+    
+    <div class="absolute top-5 left-5">
+        <img src="logobadag.png" alt="Logo" class="w-32 h-auto">
+    </div>
 
-    <div class="w-full max-w-md p-8 space-y-8 bg-white rounded-xl shadow-md transform transition duration-500 hover:scale-105">
-        <div class="flex justify-center mb-4">
-            <div class="bg-[#1E0342] p-4 rounded-full">
-                <img src="logobadag.png" alt="Logo" class="w-40 h-auto">
-            </div>
-        </div>
-
-        <h2 class="text-center text-2xl font-semibold text-gray-800">Registrasi Pengguna</h2>
+    <div class="w-full max-w-lg p-8 bg-white rounded-xl shadow-lg space-y-6">
+        <h2 class="text-center text-2xl font-semibold text-gray-800">Input Pengguna</h2>
 
         <?php if (!empty($errors)): ?>
             <div class="text-red-500 text-center">
@@ -113,7 +102,7 @@ $conn->close();
             </div>
         <?php endif; ?>
 
-        <form action="register.php" method="POST" class="space-y-4">
+        <form action="input_pengguna.php" method="POST" class="space-y-4">
             <input type="text" id="namalengkap" name="namalengkap" placeholder="Nama Lengkap" value="<?php echo isset($_POST['namalengkap']) ? htmlspecialchars($_POST['namalengkap']) : ''; ?>" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500">
             <input type="password" id="password" name="password" placeholder="Sandi" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500">
             <input type="password" id="confirm_password" name="confirm_password" placeholder="Konfirmasi Sandi" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500">
@@ -123,15 +112,16 @@ $conn->close();
                 <option value="guru">Guru</option>
                 <option value="siswa">Siswa</option>
                 <option value="orangtua">Orangtua</option>
+                <option value="admin">Admin</option>
             </select>
 
             <div id="popup-content" class="space-y-4"></div>
 
-            <input type="submit" value="Registrasi" class="w-full bg-indigo-600 text-white font-semibold py-2 rounded-lg hover:bg-indigo-700 transition duration-300">
+            <input type="submit" value="Submit" class="w-full bg-indigo-600 text-white font-semibold py-2 rounded-lg hover:bg-indigo-700 transition duration-300">
         </form>
-
-        <p class="text-center text-gray-600">Sudah memiliki akun? <a href="login.php" class="text-indigo-600 hover:underline">Login di sini</a></p>
     </div>
+
+    <a href="admin.php" class="fixed bottom-5 right-5 bg-white text-[#433D8B] font-semibold px-4 py-2 rounded-xl shadow-lg hover:bg-[#433D8B] hover:text-white transition duration-300">Kembali</a>
 
     <script>
         document.getElementById('peran').addEventListener('change', function() {

@@ -103,65 +103,113 @@ $conn->close();
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Detail Tugas</title>
-    <link rel="stylesheet" href="detail_tugas.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap');
+        body {
+            font-family: 'Poppins', sans-serif;
+        }
+        .animate-fade-in {
+            animation: fadeIn 1s ease-in-out;
+        }
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+    </style>
 </head>
-<body>
-<div class="logo-top-left">
-    <img src="logobadag.png" alt="Logo">
-</div>
+<body class="bg-gradient-to-b from-[#1E0342] to-[#433D8B] min-h-screen flex flex-col items-center p-4">
 
-<div class="page-title">Detail Tugas</div>
-
-<div class="detail-tugas-container">
-
-    <?php if (!empty($success_message)): ?>
-        <div class="success-message">
-            <p><?php echo htmlspecialchars($success_message); ?></p>
-        </div>
-    <?php endif; ?>
-
-    <?php if (!empty($errors)): ?>
-        <div class="error-messages">
-            <?php foreach ($errors as $error): ?>
-                <p><?php echo htmlspecialchars($error); ?></p>
-            <?php endforeach; ?>
-        </div>
-    <?php endif; ?>
-
-    <div class="riwayat-tugas-container">
-        <table>
-            <tr>
-                <th>Nama Siswa</th>
-                <th>Nilai</th>
-                <th>Aksi</th>
-            </tr>
-            <?php foreach ($siswa_list as $siswa): ?>
-                <tr>
-                    <td><?php echo htmlspecialchars($siswa['NAMALENGKAP'] ?? ''); ?></td>
-                    <td><?php echo htmlspecialchars($siswa['NILAI'] ?? ''); ?></td>
-                    <td>
-                        <form action="detail_tugas.php?id_tugas=<?php echo $id_tugas; ?>" method="POST" style="display:flex; gap: 10px;">
-                            <input type="hidden" name="id_siswa" value="<?php echo $siswa['ID_SISWA']; ?>">
-                            <input type="number" name="nilai" value="<?php echo htmlspecialchars($siswa['NILAI'] ?? ''); ?>" required min="0" max="100">
-                            <input type="submit" name="submit_nilai" value="Simpan Nilai" class="button-primary">
-                        </form>
-                    </td>
-                </tr>
-            <?php endforeach; ?>
-        </table>
+    <!-- Logo -->
+    <div class="absolute top-4 left-4 sm:top-6 sm:left-6">
+        <img src="logobadag.png" alt="Logo" class="w-20 sm:w-24 md:w-32">
     </div>
 
-    <div class="pagination">
-        <?php if ($total_pages > 1): ?>
-            <ul>
-                <?php for ($i = 1; $i <= $total_pages; $i++): ?>
-                    <li><a href="detail_tugas.php?id_tugas=<?php echo $id_tugas; ?>&page=<?php echo $i; ?>"><?php echo $i; ?></a></li>
-                <?php endfor; ?>
-            </ul>
-        <?php endif; ?>
-    </div>
- </div>
+    <!-- Page Title -->
+    <h1 class="text-3xl font-semibold text-white mb-8 mt-16 text-center">Detail Tugas</h1>
 
-    <a class="backguru" href="riwayat_tugas.php">Kembali</a>
+    <!-- Detail Tugas Container -->
+    <div class="w-full max-w-4xl bg-white p-6 rounded-lg shadow-lg animate-fade-in">
+
+        <!-- Success and Error Messages -->
+        <div class="mb-4">
+            <?php if (!empty($success_message)): ?>
+                <div class="p-4 bg-green-500 text-white rounded-lg shadow-lg text-center">
+                    <p><?php echo htmlspecialchars($success_message); ?></p>
+                </div>
+            <?php endif; ?>
+
+            <?php if (!empty($errors)): ?>
+                <div class="p-4 bg-red-500 text-white rounded-lg shadow-lg text-center">
+                    <?php foreach ($errors as $error): ?>
+                        <p><?php echo htmlspecialchars($error); ?></p>
+                    <?php endforeach; ?>
+                </div>
+            <?php endif; ?>
+        </div>
+
+        <!-- Task Details -->
+        <div class="mb-6">
+            <h2 class="text-2xl font-semibold mb-2"><?php echo htmlspecialchars($judul_tugas); ?></h2>
+            <p class="text-gray-700"><?php echo nl2br(htmlspecialchars($deskripsi)); ?></p>
+        </div>
+
+        <!-- Student Grades Table -->
+        <div class="overflow-x-auto">
+            <table class="w-full border-collapse bg-white rounded-lg shadow-lg">
+                <thead class="bg-[#433D8B] text-white">
+                    <tr>
+                        <th class="p-3">Nama Siswa</th>
+                        <th class="p-3">Nilai</th>
+                        <th class="p-3">Aksi</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php if (empty($siswa_list)): ?>
+                        <tr>
+                            <td colspan="3" class="p-3 text-center text-gray-500">Tidak ada data nilai siswa.</td>
+                        </tr>
+                    <?php else: ?>
+                        <?php foreach ($siswa_list as $siswa): ?>
+                            <tr class="border-b hover:bg-gray-100 transition-colors duration-300">
+                                <td class="p-3"><?php echo htmlspecialchars($siswa['NAMALENGKAP']); ?></td>
+                                <td class="p-3">
+                                    <form action="detail_tugas.php?id_tugas=<?php echo $id_tugas; ?>" method="POST" class="flex items-center gap-2">
+                                        
+                                        <input type="hidden" name="id_siswa" value="<?php echo $siswa['ID_SISWA']; ?>">
+                                        <input type="number" name="nilai" value="<?php echo htmlspecialchars($siswa['NILAI'] ?? ''); ?>" class="border rounded-md p-2 w-24" required min="0" max="100">
+                                        <td class="p-3">
+                                        <input type="submit" name="submit_nilai" value="Simpan Nilai" class="bg-blue-500 text-white py-2 px-4 rounded-lg hover:bg-blue-700 transition duration-300 cursor-pointer">
+                                        </td>
+                                    </form>
+                                </td>
+                                
+                            </tr>
+                        <?php endforeach; ?>
+                    <?php endif; ?>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Pagination -->
+        <div class="mt-6 flex justify-center">
+            <?php if ($total_pages > 1): ?>
+                <ul class="flex space-x-2">
+                    <?php for ($i = 1; $i <= $total_pages; $i++): ?>
+                        <li>
+                            <a href="detail_tugas.php?id_tugas=<?php echo $id_tugas; ?>&page=<?php echo $i; ?>" class="bg-blue-500 text-white py-2 px-4 rounded-lg hover:bg-blue-700 transition duration-300"><?php echo $i; ?></a>
+                        </li>
+                    <?php endfor; ?>
+                </ul>
+            <?php endif; ?>
+        </div>
+    </div>
+
+    <!-- Back Button -->
+    <a href="riwayat_tugas.php" class="fixed bottom-5 right-5 bg-white text-[#433D8B] font-semibold px-4 py-2 rounded-xl shadow-lg hover:bg-[#433D8B] hover:text-white transition duration-300">Kembali</a>
 </body>
 </html>

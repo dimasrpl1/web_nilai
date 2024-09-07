@@ -54,6 +54,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
         if ($stmt->execute()) {
             $success_message = "Pengguna berhasil diperbarui.";
+            header("Location: data_pengguna.php"); // Redirect ke data_pengguna.php setelah berhasil
+            exit();
         } else {
             $errors[] = "Terjadi kesalahan saat memperbarui pengguna.";
         }
@@ -70,105 +72,113 @@ $conn->close();
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Edit Pengguna</title>
-    <link rel="stylesheet" href="edit_pengguna.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap');
+        body {
+            font-family: 'Poppins', sans-serif;
+        }
+    </style>
 </head>
-<body>
-<div class="logo-top-left">
-    <img src="logobadag.png" alt="Logo">
-</div>
-
-<div class="page-title">Edit Pengguna</div>
-
-    <?php if ($success_message): ?>
-        <div class="success-message">
-            <p><?php echo htmlspecialchars($success_message); ?></p>
-        </div>
-    <?php endif; ?>
-
-    <?php if (!empty($errors)): ?>
-        <div class="error-messages">
-            <?php foreach ($errors as $error): ?>
-                <p><?php echo htmlspecialchars($error); ?></p>
-            <?php endforeach; ?>
-        </div>
-    <?php endif; ?>
-
-    <div class="container">
-        <div class="form-box">
-            <form action="edit_pengguna.php?id=<?php echo $id; ?>" method="POST">
-                <div class="form-group">
-                    <label for="namalengkap">Nama Lengkap:</label>
-                    <input type="text" id="namalengkap" name="namalengkap" value="<?php echo htmlspecialchars($user['NAMALENGKAP']); ?>" required>
-                </div>
-                
-                <div class="form-group">
-                    <label for="password">Password:</label>
-                    <input type="password" id="password" name="password" value="<?php echo htmlspecialchars($user['PASSWORD']); ?>" required>
-                </div>
-                
-                <div class="form-group">
-                    <label for="nik">NIK:</label>
-                    <input type="text" id="nik" name="nik" value="<?php echo htmlspecialchars($user['NIK']); ?>" required>
-                </div>
-                
-                <div class="form-group">
-                    <label for="peran">Peran:</label>
-                    <select id="peran" name="peran" required>
-                        <option value="admin" <?php echo $user['PERAN'] == 'admin' ? 'selected' : ''; ?>>Admin</option>
-                        <option value="guru" <?php echo $user['PERAN'] == 'guru' ? 'selected' : ''; ?>>Guru</option>
-                        <option value="siswa" <?php echo $user['PERAN'] == 'siswa' ? 'selected' : ''; ?>>Siswa</option>
-                        <option value="orangtua" <?php echo $user['PERAN'] == 'orangtua' ? 'selected' : ''; ?>>Orangtua</option>
-                    </select>
-                </div>
-
-                <div id="additional-fields">
-                    <?php if ($user['PERAN'] == 'guru'): ?>
-                        <div class="form-group">
-                            <label for="mapel">Mata Pelajaran:</label>
-                            <select id="mapel" name="mapel" required>
-                                <option value="">Pilih Mata Pelajaran</option>
-                                <option value="Produktif" <?php echo $user['MAPEL'] == 'Produktif' ? 'selected' : ''; ?>>Produktif</option>
-                                <option value="PPKN" <?php echo $user['MAPEL'] == 'PPKN' ? 'selected' : ''; ?>>PPKN</option>
-                                <option value="PAI" <?php echo $user['MAPEL'] == 'PAI' ? 'selected' : ''; ?>>PAI</option>
-                                <option value="Matematika" <?php echo $user['MAPEL'] == 'Matematika' ? 'selected' : ''; ?>>Matematika</option>
-                                <option value="Bahasa Inggris" <?php echo $user['MAPEL'] == 'Bahasa Inggris' ? 'selected' : ''; ?>>Bahasa Inggris</option>
-                                <option value="PKK" <?php echo $user['MAPEL'] == 'PKK' ? 'selected' : ''; ?>>PKK</option>
-                                <option value="MPKK" <?php echo $user['MAPEL'] == 'MPKK' ? 'selected' : ''; ?>>MPKK</option>
-                                <option value="Bahasa Indonesia" <?php echo $user['MAPEL'] == 'Bahasa Indonesia' ? 'selected' : ''; ?>>Bahasa Indonesia</option>
-                            </select>
-                        </div>
-                    <?php elseif ($user['PERAN'] == 'orangtua'): ?>
-                        <div class="form-group">
-                            <label for="anak">Nama Anak:</label>
-                            <select id="anak" name="anak">
-                                <option value="">Pilih Nama Anak</option>
-                                <?php
-                                $conn = new mysqli($servername, $username, $password, $dbname);
-                                $result = $conn->query("SELECT NAMALENGKAP FROM data_user WHERE PERAN = 'siswa'");
-                                while ($row = $result->fetch_assoc()) {
-                                    echo '<option value="' . htmlspecialchars($row['NAMALENGKAP']) . '"' . ($user['ANAKSISWA'] == $row['NAMALENGKAP'] ? ' selected' : '') . '>' . htmlspecialchars($row['NAMALENGKAP']) . '</option>';
-                                }
-                                $conn->close();
-                                ?>
-                            </select>
-                        </div>
-                    <?php elseif ($user['PERAN'] == 'siswa'): ?>
-                        <div class="form-group">
-                            <label for="kelas">Kelas:</label>
-                            <select id="kelas" name="kelas">
-                                <option value="">Pilih Kelas</option>
-                                <option value="XII RPL 1" <?php echo $user['KELAS'] == 'XII RPL 1' ? 'selected' : ''; ?>>XII RPL 1</option>
-                                <option value="XII RPL 2" <?php echo $user['KELAS'] == 'XII RPL 2' ? 'selected' : ''; ?>>XII RPL 2</option>
-                            </select>
-                        </div>
-                    <?php endif; ?>
-                </div>
-
-                <button type="submit" name="edit" class="submit-button">Simpan Perubahan</button>
-            </form>
-        </div>
+<body class="bg-gradient-to-b from-[#1E0342] to-[#433D8B] flex items-center justify-center min-h-screen px-4 py-8">
+    <div class="absolute top-4 left-4">
+        <img src="logobadag.png" alt="Logo" class="w-20 sm:w-24 md:w-32">
     </div>
 
-    <a class="backguru" href="admin.php">Kembali</a>
+    <div class="w-full max-w-lg p-6 sm:p-8 bg-white rounded-xl shadow-lg transform transition duration-500 hover:scale-105">
+        <h2 class="text-center text-2xl font-semibold text-gray-800 mb-6">Edit Pengguna</h2>
+
+        <?php if ($success_message): ?>
+            <div class="bg-green-100 text-green-700 p-4 mb-4 rounded-lg">
+                <p><?php echo htmlspecialchars($success_message); ?></p>
+            </div>
+        <?php endif; ?>
+
+        <?php if (!empty($errors)): ?>
+            <div class="bg-red-100 text-red-700 p-4 mb-4 rounded-lg">
+                <?php foreach ($errors as $error): ?>
+                    <p><?php echo htmlspecialchars($error); ?></p>
+                <?php endforeach; ?>
+            </div>
+        <?php endif; ?>
+
+        <form action="edit_pengguna.php?id=<?php echo $id; ?>" method="POST" class="space-y-6">
+            <div class="form-group">
+                <label for="namalengkap" class="block text-sm font-medium text-gray-700">Nama Lengkap:</label>
+                <input type="text" id="namalengkap" name="namalengkap" value="<?php echo htmlspecialchars($user['NAMALENGKAP']); ?>" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500">
+            </div>
+            
+            <div class="form-group">
+                <label for="password" class="block text-sm font-medium text-gray-700">Password:</label>
+                <input type="password" id="password" name="password" value="<?php echo htmlspecialchars($user['PASSWORD']); ?>" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500">
+            </div>
+            
+            <div class="form-group">
+                <label for="nik" class="block text-sm font-medium text-gray-700">NIK:</label>
+                <input type="text" id="nik" name="nik" value="<?php echo htmlspecialchars($user['NIK']); ?>" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500">
+            </div>
+            
+            <div class="form-group">
+                <label for="peran" class="block text-sm font-medium text-gray-700">Peran:</label>
+                <select id="peran" name="peran" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                    <option value="admin" <?php echo $user['PERAN'] == 'admin' ? 'selected' : ''; ?>>Admin</option>
+                    <option value="guru" <?php echo $user['PERAN'] == 'guru' ? 'selected' : ''; ?>>Guru</option>
+                    <option value="siswa" <?php echo $user['PERAN'] == 'siswa' ? 'selected' : ''; ?>>Siswa</option>
+                    <option value="orangtua" <?php echo $user['PERAN'] == 'orangtua' ? 'selected' : ''; ?>>Orangtua</option>
+                </select>
+            </div>
+
+            <div id="additional-fields" class="space-y-4">
+                <?php if ($user['PERAN'] == 'guru'): ?>
+                    <div class="form-group">
+                        <label for="mapel" class="block text-sm font-medium text-gray-700">Mata Pelajaran:</label>
+                        <select id="mapel" name="mapel" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                            <option value="">Pilih Mata Pelajaran</option>
+                            <option value="Produktif" <?php echo $user['MAPEL'] == 'Produktif' ? 'selected' : ''; ?>>Produktif</option>
+                            <option value="PPKN" <?php echo $user['MAPEL'] == 'PPKN' ? 'selected' : ''; ?>>PPKN</option>
+                            <option value="PAI" <?php echo $user['MAPEL'] == 'PAI' ? 'selected' : ''; ?>>PAI</option>
+                            <option value="Matematika" <?php echo $user['MAPEL'] == 'Matematika' ? 'selected' : ''; ?>>Matematika</option>
+                            <option value="Bahasa Inggris" <?php echo $user['MAPEL'] == 'Bahasa Inggris' ? 'selected' : ''; ?>>Bahasa Inggris</option>
+                            <option value="PKK" <?php echo $user['MAPEL'] == 'PKK' ? 'selected' : ''; ?>>PKK</option>
+                            <option value="MPKK" <?php echo $user['MAPEL'] == 'MPKK' ? 'selected' : ''; ?>>MPKK</option>
+                            <option value="Bahasa Indonesia" <?php echo $user['MAPEL'] == 'Bahasa Indonesia' ? 'selected' : ''; ?>>Bahasa Indonesia</option>
+                        </select>
+                    </div>
+                <?php elseif ($user['PERAN'] == 'orangtua'): ?>
+                    <div class="form-group">
+                        <label for="anak" class="block text-sm font-medium text-gray-700">Nama Anak:</label>
+                        <select id="anak" name="anak" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                            <option value="">Pilih Nama Anak</option>
+                            <?php
+                            $conn = new mysqli($servername, $username, $password, $dbname);
+                            $result = $conn->query("SELECT NAMALENGKAP FROM data_user WHERE PERAN = 'siswa'");
+                            while ($row = $result->fetch_assoc()) {
+                                echo '<option value="' . htmlspecialchars($row['NAMALENGKAP']) . '"' . ($user['ANAKSISWA'] == $row['NAMALENGKAP'] ? ' selected' : '') . '>' . htmlspecialchars($row['NAMALENGKAP']) . '</option>';
+                            }
+                            $conn->close();
+                            ?>
+                        </select>
+                    </div>
+                <?php elseif ($user['PERAN'] == 'siswa'): ?>
+                    <div class="form-group">
+                        <label for="kelas" class="block text-sm font-medium text-gray-700">Kelas:</label>
+                        <select id="kelas" name="kelas" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                            <option value="">Pilih Kelas</option>
+                            <option value="XII RPL 1" <?php echo $user['KELAS'] == 'XII RPL 1' ? 'selected' : ''; ?>>XII RPL 1</option>
+                            <option value="XII RPL 2" <?php echo $user['KELAS'] == 'XII RPL 2' ? 'selected' : ''; ?>>XII RPL 2</option>
+                        </select>
+                    </div>
+                <?php endif; ?>
+            </div>
+
+            <button type="submit" name="edit" class="w-full bg-indigo-600 text-white py-2 rounded-lg hover:bg-indigo-700 transition duration-300">Simpan Perubahan</button>
+        </form>
+
+        
+    </div>
+    <a href="admin.php" class="fixed bottom-5 right-5 bg-white text-[#433D8B] font-semibold px-4 py-2 sm:px-5 sm:py-3 rounded-xl shadow-lg hover:bg-[#433D8B] hover:text-white transition duration-300">
+        Kembali
+    </a>
 </body>
 </html>
+
